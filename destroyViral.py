@@ -4,15 +4,24 @@ from pygame.locals import *
 from random import randrange
 from airplane import Airplane
 from bullet import Bullet
-#颜色
-white = (255,255,255)
-black = (0,0,0)
-gray = (128,128,128)
-red = (200,0,0)
-green = (0,200,0)
-bright_red = (255,0,0)
-bright_green = (0,255,0)
-blue = (0,0,255)
+
+def loadgameover(scorenum):#绘出GAME OVER
+
+  my_font=pygame.font.SysFont(None,50)
+  levelstr='GAME OVER'
+  over_screen=my_font.render(levelstr, True, (255, 0, 0))
+  screen.blit(over_screen, (300,240))
+  highscorestr='YOUR SCORE IS '+str(scorenum)
+  over_screen=my_font.render(highscorestr, True, (255, 0, 0))
+  screen.blit(over_screen, (280,290))
+
+  # if scorenum>int(highscore):#写入最高分
+  #   highscorestr='YOUR HAVE GOT THE HIGHEST SCORE!'
+  #   text_screen=my_font.render(highscorestr, True, (255, 0, 0))
+  #   screen.blit(text_screen, (100,340))
+  #   highfile=open('highscore','w')
+  #   highfile.writelines(str(scorenum))
+  #   highfile.close()
 
 if __name__ == '__main__':
     pygame.init()  #初始化
@@ -39,7 +48,8 @@ if __name__ == '__main__':
     bullet_sprites = pygame.sprite.RenderUpdates()  # 创建sprite容器  树
     AddEnemy = pygame.USEREVENT + 1  #添加子弹的时间
     pygame.time.set_timer(AddEnemy, 1000)
-
+    #画圆
+    pygame.draw.rect(screen, [255, 0, 0], [250, 150, 300, 200], 0)
     pygame.display.flip()
     while True:
         clock.tick(60)
@@ -51,6 +61,8 @@ if __name__ == '__main__':
                 exit()
             elif event.type == AddEnemy:
                 bullet_sprites.add(Bullet(screen, airplane))
+            elif event.type == pygame.K_BACKSPACE:
+                loadgameover(count_num)
         # 获取键盘状态
         pressed_keys = pygame.key.get_pressed()
         #调用方法更新
@@ -61,9 +73,10 @@ if __name__ == '__main__':
         pygame.display.update(bullet_updates)
 
         #子弹和病毒组的碰撞
-        hit_list = pygame.sprite.groupcollide(bullet_sprites, viral_sprites, True, False)
-        if hit_list:
-            bullet_sprites[0].kill()
+        # hit_list = pygame.sprite.groupcollide(bullet_sprites, viral_sprites, True, False)
+        # if hit_list:
+        #     bullet_sprites[0].kill()
+        #     count_num += bullet_sprites[0].damage
         # 得分多少
         textObj = countObj.render('SCORE:%d' % count_num, False, (255, 0, 0))  # 显示得分内容
         textRectObj = textObj.get_rect()
